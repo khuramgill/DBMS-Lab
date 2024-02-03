@@ -1,0 +1,11 @@
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\bin\Debug\DataBaseLab_Gollum.exe.config
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\bin\Debug\DataBaseLab_Gollum.exe
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\bin\Debug\DataBaseLab_Gollum.pdb
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.csproj.AssemblyReference.cache
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.csproj.SuggestedBindingRedirects.cache
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.Properties.Resources.resources
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.csproj.GenerateResource.cache
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.csproj.CoreCompileInputs.cache
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.exe
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.pdb
+D:\4th Sem\DBMS\Lab\Lab 1\DataBaseLab_Gollum\obj\Debug\DataBaseLab_Gollum.Form1.resources
