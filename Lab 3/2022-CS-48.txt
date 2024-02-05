@@ -1,0 +1,72 @@
+Q1
+SELECT * FROM Orders WHERE ShippedDate>RequiredDate;
+***
+
+
+Q2
+SELECT City FROM Employees;
+***
+
+
+Q3
+SELECT * FROM Employees WHERE ReportsTo IS NULL; 
+***
+
+
+Q4
+SELECT ProductName FROM Products WHERE Discontinued <> 0;
+***
+
+
+Q5
+SELECT OrderID, ProductID FROM [Order Details] WHERE Discount = 0;
+***
+
+
+Q6
+SELECT CustomerID FROM Customers WHERE Region IS NULL;
+***
+
+
+Q7
+SELECT CustomerID, Phone FROM Customers WHERE Country IN('UK', 'USA');
+***
+
+
+Q8
+Select CompanyName FROM Suppliers WHERE HomePage IS NOT NULL;
+***
+
+
+Q9
+Select ShipCountry FROM Orders WHERE Year(ShippedDate) = 1997;
+***
+
+
+Q10
+SELECT CustomerID FROM Orders WHERE ShippedDate IS NULL;
+***
+
+
+Q11
+SELECT SupplierID, CompanyName, City FROM Suppliers;
+***
+
+
+Q12
+SELECT * FROM Employees WHERE City = 'London';
+***
+
+
+Q13
+SELECT ProductName FROM Products WHERE Discontinued = 0;
+***
+
+
+Q14
+SELECT * FROM [Order Details] WHERE Discount <= 0.1;
+***
+
+
+Q15
+SELECT EmployeeID, LastName, FirstName, HomePhone FROM Employees WHERE Region IS NULL;
