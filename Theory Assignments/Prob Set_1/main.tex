@@ -1,0 +1,717 @@
+\documentclass[10pt]{article}
+
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb, graphicx, multicol, array}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+\begin{document}
+ 
+\title{CS262- Problem Set 1}
+\author{
+CS262- Database Systems\\
+RegNo 2022-CS-48 | Khuram Iqbal\\}
+\maketitle
+\noindent
+Consider the following schema.\\
+Company(\underline{name}, city)\\
+\textbf{Description}
+Relation list the company name and location of company in city attribute. \\ \\
+\noindent
+Product(\underline{name}, maker, cost, year)\\ 
+\textbf{Description}
+Each product has name, and manufacturer of product in maker, cost as purchase price, and year as the launch year of that particular product. product name is unique for all problems except problem No.4 \\ \\
+Purchase(\underline{id}, product, buyer, price)\\
+\textbf{Description}
+Relation list the purchases made by customer listed in buyer columns, price as sale price, and product as name of product. 
+\\ \\
+\noindent
+\textbf{To-Do} For each of the problems given below you are required to provide Relational algebra expression and at least five equivalent solutions in SQL, out of which one solution should be performed using
+\begin{enumerate}
+    \item Cartesian product
+    \item Joins
+    \item Subquery
+\end{enumerate}
+
+If any of the above solutions is not possible provide the reason as well.\\ \\
+
+\usepackage[margin=1in]{geometry}
+\begin{problem}{1}
+Find the products(names only) whose cost is more than the average cost.
+\end{problem}
+
+\begin{proof}[Solution]
+
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name}}\left(\sigma_{\text{cost} > \text{avg\_cost}}(\text{Product} \bowtie_{\text{name} = \text{product}} (\pi_{\text{product}, \text{avg\_cost}}(\gamma_{\text{avg\_cost}}(\text{Product}))))
+\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p.name FROM Product p, (SELECT AVG(cost) as     avg_cost FROM Product)
+    avg_p WHERE p.cost > avg_p.avg_cost;  
+    \end{verbatim}
+
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p
+    JOIN (SELECT AVG(cost) as avg_cost FROM Product) avg_p
+    ON p.cost > avg_p.avg_cost;
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT name
+    FROM Product
+    WHERE cost > (SELECT AVG(cost) FROM Product);
+    \end{verbatim}
+
+    \item Solution num: 4
+    \begin{verbatim}
+        SELECT DISTINCT p1.name
+        FROM Product p1
+        JOIN Product p2 ON p1.name = p2.name AND p2.cost > (SELECT AVG(cost) FROM Product);
+
+    \end{verbatim}
+
+    \item Solution num: 5
+    \begin{verbatim}
+        SELECT DISTINCT p1.name FROM Product p1 WHERE p1.name IN
+        (SELECT name FROM Product WHERE cost > (SELECT AVG(cost) FROM Product)
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+\begin{problem}{2}
+List the name of companies whose products are bought by Aslam.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name}}\left(\sigma_{\text{buyer} = \text{'Aslam'}}(\text{Purchase} \bowtie_{\text{product} = \text{name}} \text{Product})\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+
+    \item Using WHERE Conditions:
+    \begin{verbatim}
+    SELECT DISTINCT Company.name
+    FROM Company, Product, Purchase
+    WHERE Company.name = Product.maker
+      AND Product.name = Purchase.product
+      AND Purchase.buyer = 'Aslam';
+    \end{verbatim}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT c.name
+    FROM Company c, Product p, Purchase pu
+    WHERE p.name = pu.product
+      AND c.name = p.maker
+      AND pu.buyer = 'Aslam';
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT c.name
+    FROM Company c
+    JOIN Product p ON c.name = p.maker
+    JOIN Purchase pu ON p.name = pu.product
+    WHERE pu.buyer = 'Aslam';
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT c.name
+    FROM Company c
+    WHERE c.name IN (SELECT p.maker
+                     FROM Product p
+                     JOIN Purchase pu ON p.name = pu.product
+                     WHERE pu.buyer = 'Aslam');
+    \end{verbatim}
+    \usepackage[margin=1in]{geometry}
+    \item Solution: 5
+    \begin{verbatim}
+    SELECT DISTINCT Company.name
+    FROM Company, Product, Purchase
+    WHERE Company.name = Product.maker
+      AND Product.name = Purchase.product
+      AND Purchase.buyer = 'Aslam';
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{3}
+List the name of products that are more expensive that all the products produced by Unilever.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name}}\left(\text{Product} - \pi_{\text{name}}\left(\sigma_{\text{maker} = \text{'Unilever'}}(\text{Product})\right)\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p1.name
+    FROM Product p1, Product p2
+    WHERE p1.cost > p2.cost
+      AND p2.maker = 'Unilever';
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p1.name
+    FROM Product p1
+    JOIN Product p2 ON p1.cost > p2.cost
+    WHERE p2.maker = 'Unilever';
+    \end{verbatim}
+
+    \item Using Join and Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT Product.name
+    FROM Product
+    WHERE Product.cost > ALL (
+        SELECT cost
+        FROM Product, Company
+        WHERE Product.maker = Company.name
+          AND Company.name = 'Unilever'
+    );
+    \end{verbatim}
+    
+    \item Using Max nad Join:
+    \begin{verbatim}
+    SELECT DISTINCT Product.name
+    FROM Product, Company
+    WHERE Product.maker = Company.name
+      AND Company.name = 'Unilever'
+      AND Product.cost > (
+          SELECT MAX(cost)
+          FROM Product, Company
+          WHERE Product.maker = Company.name
+            AND Company.name = 'Unilever'
+      );
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT name
+    FROM Product p1
+    WHERE cost > ALL (SELECT cost
+                     FROM Product p2
+                     WHERE p2.maker = 'Unilever');
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{4}
+List the copy cat products along with manufacturer, i.e. the products that have the same name as produced by Unilever.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{Product.name, maker}}\left(\sigma_{\text{Product.name} = \text{UnileverProducts.name}}\left(\text{Product} \bowtie \rho_{\text{UnileverProducts}(\text{name}, \text{'Unilever'})}(\text{Product})\right)\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p1.name, p1.maker
+    FROM Product p1, Product p2
+    WHERE p1.name = p2.name
+      AND p2.maker = 'Unilever';
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p1.name, p1.maker
+    FROM Product p1
+    JOIN Product p2 ON p1.name = p2.name
+    WHERE p2.maker = 'Unilever';
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT name, maker
+    FROM Product
+    WHERE name IN (SELECT name FROM Product WHERE maker = 'Unilever');
+    \end{verbatim}
+     \item Using Simple Join:
+    \begin{verbatim}
+    SELECT Product.name, Product.maker
+    FROM Product, Company
+    WHERE Product.maker = Company.name
+      AND Company.name = 'Unilever'
+      AND Product.name IN (
+          SELECT Product.name
+          FROM Product, Company
+          WHERE Product.maker = Company.name
+            AND Company.name <> 'Unilever'
+      );
+    \end{verbatim}
+    
+    \item Using Join with NOT EXISTS:
+    \begin{verbatim}
+    SELECT Product.name, Product.maker
+    FROM Product, Company
+    WHERE Product.maker = Company.name
+      AND Company.name = 'Unilever'
+      AND NOT EXISTS (
+          SELECT *
+          FROM Product, Company
+          WHERE Product.maker = Company.name
+            AND Company.name <> 'Unilever'
+            AND Product.name = Product.name
+      );
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{5}
+Buyers of products produced in Lahore. 
+\end{problem}
+
+\begin{proof}[Solution]
+textbf{Relational Algebra:}
+\[
+\pi_{\text{Purchase.buyer}}\left(\sigma_{\text{Product.maker} = \text{'Lahore'}}\left(\text{Product} \bowtie \text{Purchase}\right)\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT pu.buyer
+    FROM Product pr, Purchase pu
+    WHERE pr.maker = 'Lahore'
+      AND pr.name = pu.product;
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT pu.buyer
+    FROM Product pr
+    JOIN Purchase pu ON pr.name = pu.product
+    WHERE pr.maker = 'Lahore';
+    \end{verbatim}
+    \item Using Simple Join:
+    \begin{verbatim}
+    SELECT DISTINCT Purchase.buyer
+    FROM Purchase, Product, Company
+    WHERE Purchase.product = Product.name
+      AND Product.maker = Company.name
+      AND Company.city = 'Lahore';
+    \end{verbatim}
+    
+    \item Using Simple Join with IN:
+    \begin{verbatim}
+    SELECT DISTINCT buyer
+    FROM Purchase
+    WHERE product IN (
+          SELECT Product.name
+          FROM Product, Company
+          WHERE Product.maker = Company.name
+            AND Company.city = 'Lahore'
+      );
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT buyer
+    FROM Purchase
+    WHERE product IN (SELECT name FROM Product WHERE maker = 'Lahore');
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+
+
+\begin{problem}{6}
+List of buyers, who only buy the products 'Made in Karachi'.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{buyer}}\left(\sigma_{\text{product\_city} = 'Karachi' \land \text{count\_distinct\_products} = 1}(\text{Purchase} \bowtie_{\text{product} = \text{name}} (\gamma_{\text{count\_distinct\_products}}(\text{Product})))
+\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT pu.buyer
+    FROM Purchase pu, (SELECT product, COUNT(DISTINCT name) as count_distinct_products
+                      FROM Product WHERE maker = 'Karachi' GROUP BY product) prod_khi
+    WHERE pu.product = prod_khi.product AND prod_khi.count_distinct_products = 1;
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT pu.buyer
+    FROM Purchase pu
+    JOIN (SELECT product, COUNT(DISTINCT name) as count_distinct_products
+          FROM Product WHERE maker = 'Karachi' GROUP BY product) prod_khi
+    ON pu.product = prod_khi.product AND prod_khi.count_distinct_products = 1;
+    \end{verbatim}
+
+    \item Using Simple Join:
+    \begin{verbatim}
+    SELECT DISTINCT P1.buyer
+    FROM Purchase P1
+    WHERE P1.product IN (
+          SELECT DISTINCT Product.name
+          FROM Product, Company
+          WHERE Product.maker = Company.name
+            AND Company.city = 'Karachi'
+      )
+      AND NOT EXISTS (
+          SELECT P2.buyer
+          FROM Purchase P2
+          WHERE P2.buyer = P1.buyer
+            AND P2.product NOT IN (
+                SELECT Product.name
+                FROM Product, Company
+                WHERE Product.maker = Company.name
+                  AND Company.city = 'Karachi'
+            )
+      );
+    \end{verbatim}
+    
+    \item Using NOT IN:
+    \begin{verbatim}
+    SELECT DISTINCT buyer
+    FROM Purchase
+    WHERE buyer NOT IN (
+          SELECT DISTINCT P.buyer
+          FROM Purchase P, Product, Company
+          WHERE P.product = Product.name
+            AND Product.maker = Company.name
+            AND Company.city = 'Karachi'
+            AND P.product NOT IN (
+                SELECT DISTINCT Product.name
+                FROM Product, Company
+                WHERE Product.maker = Company.name
+                  AND Company.city != 'Karachi'
+            )
+      );
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT buyer
+    FROM Purchase
+    WHERE product IN (SELECT product
+                      FROM Product
+                      WHERE maker = 'Karachi'
+                      GROUP BY product
+                      HAVING COUNT(DISTINCT name) = 1);
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{7}
+Name and price of products bought by more than five customers.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name, price}}\left(\sigma_{\text{count\_distinct\_buyers} > 5}(\text{Purchase} \bowtie_{\text{product} = \text{name}} (\gamma_{\text{count\_distinct\_buyers}}(\text{Purchase})))
+\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT pr.name, pr.price
+    FROM Purchase pu, (SELECT product, COUNT(DISTINCT buyer) as count_distinct_buyers
+                      FROM Purchase GROUP BY product) pu_count
+    JOIN Product pr ON pr.name = pu_count.product
+    WHERE pu.product = pu_count.product AND pu_count.count_distinct_buyers > 5;
+    \end{verbatim}
+
+    \item Using COUNT and GROUP BY:
+    \begin{verbatim}
+    SELECT Product.name, Purchase.price
+    FROM Product
+    JOIN Purchase ON Product.name = Purchase.product
+    WHERE Purchase.product IN (
+          SELECT P.product
+          FROM Purchase P
+          GROUP BY P.product
+          HAVING COUNT(DISTINCT P.buyer) > 5
+      );
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT name, price
+    FROM Product
+    WHERE name IN (
+          SELECT P.product
+          FROM Purchase P
+          GROUP BY P.product
+          HAVING COUNT(DISTINCT P.buyer) > 5
+      );
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT pr.name, pr.price
+    FROM Purchase pu
+    JOIN (SELECT product, COUNT(DISTINCT buyer) as count_distinct_buyers
+          FROM Purchase GROUP BY product) pu_count
+    ON pu.product = pu_count.product AND pu_count.count_distinct_buyers > 5
+    JOIN Product pr ON pr.name = pu_count.product;
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT pr.name, pr.price
+    FROM Product pr
+    WHERE pr.name IN (SELECT pu.product
+                      FROM Purchase pu
+                      GROUP BY pu.product
+                      HAVING COUNT(DISTINCT pu.buyer) > 5);
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{8}
+List of products that are more expensive that all the products made by same company before 2015.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name}}\left(\sigma_{\text{price} > \text{max\_price\_before\_2015}}(\text{Product} \bowtie_{\text{name} = \text{product}} (\gamma_{\text{max\_price\_before\_2015}}(\sigma_{\text{year} < 2015}(\text{Product}))))
+\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p, (SELECT product, MAX(price) as max_price_before_2015
+                    FROM Product
+                    WHERE year < 2015
+                    GROUP BY product) max_p
+    WHERE p.name = max_p.product AND p.price > max_p.max_price_before_2015;
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p
+    JOIN (SELECT product, MAX(price) as max_price_before_2015
+          FROM Product
+          WHERE year < 2015
+          GROUP BY product) max_p
+    ON p.name = max_p.product AND p.price > max_p.max_price_before_2015;
+    \end{verbatim}
+
+    \item Using NOT EXISTS:
+    \begin{verbatim}
+    SELECT p1.name
+    FROM Product p1
+    WHERE p1.cost > ALL (
+          SELECT p2.cost
+          FROM Product p2
+          WHERE p2.maker = p1.maker AND p2.year < 2015
+      );
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT name
+    FROM Product
+    WHERE cost > ALL (
+          SELECT cost
+          FROM Product
+          WHERE maker = Product.maker AND year < 2015
+      );
+    \end{verbatim}
+    
+    \item Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT name
+    FROM Product p
+    WHERE price > (SELECT MAX(price)
+                  FROM Product
+                  WHERE year < 2015
+                  GROUP BY product);
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{9}
+List of companies who never sale products with loss.
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{maker}}\left(\text{Product} - \pi_{\text{maker}}\left(\sigma_{\text{price} < \text{cost}}(\text{Product})\right)\right)
+\]
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p.maker
+    FROM Product p
+    WHERE NOT EXISTS (SELECT 1
+                      FROM Product
+                      WHERE maker = p.maker AND price < cost);
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p.maker
+    FROM Product p
+    LEFT JOIN (SELECT maker, 1 as loss
+               FROM Product
+               WHERE price < cost) loss_p
+    ON p.maker = loss_p.maker
+    WHERE loss_p.maker IS NULL;
+    \end{verbatim}
+
+    \item Using NOT EXISTS:
+    \begin{verbatim}
+    SELECT DISTINCT maker
+    FROM Product p1
+    WHERE NOT EXISTS (
+          SELECT *
+          FROM Purchase p2
+          WHERE p2.product = p1.name AND p2.price < p1.cost
+      );
+    \end{verbatim}
+
+    \item Using LEFT Join:
+    \begin{verbatim}
+    SELECT DISTINCT p.maker
+    FROM Product p
+    LEFT JOIN Purchase pu ON p.name = pu.product AND pu.price < p.cost
+    WHERE pu.id IS NULL;
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT maker
+    FROM Product
+    WHERE maker NOT IN (SELECT maker
+                       FROM Product
+                       WHERE price < cost);
+    \end{verbatim}
+\end{enumerate}
+\end{proof}
+
+
+\begin{problem}{10}
+List the products which have more than average revenue in 2015 but below average revenue in 2016
+\end{problem}
+
+\begin{proof}[Solution]
+\textbf{Relational Algebra:}
+\[
+\pi_{\text{name}}\left(\sigma_{\text{revenue} > \text{avg\_revenue\_2015} \land \text{revenue} < \text{avg\_revenue\_2016}}
+ (\text{Product} \bowtie_{\text{name} = \text{product}} (\pi_{\text{product},
+
+\text{revenue}}(\gamma_{\text{avg\_revenue\_2015}}(\text{Product}) \bowtie_{\text{year} = 2016} \gamma_{\text{avg\_revenue\_2016}}(\text{Product}))))
+\right)
+\]
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{WhatsApp Image 2024-02-07 at 20.31.13_e550abe6.jpg}
+    \caption{Due to unstable margins}
+    \label{fig1:}
+\end{figure}
+
+
+\textbf{SQL Solutions:}
+\begin{enumerate}
+    \item Using Cartesian Product:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p,
+         (SELECT AVG(revenue) as avg_revenue_2015
+          FROM Product
+          WHERE year = 2015) avg_2015,
+         (SELECT AVG(revenue) as avg_revenue_2016
+          FROM Product
+          WHERE year = 2016) avg_2016
+    WHERE p.revenue > avg_2015.avg_revenue_2015
+      AND p.revenue < avg_2016.avg_revenue_2016;
+    \end{verbatim}
+    
+    \item Using Joins:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p
+    JOIN (SELECT AVG(revenue) as avg_revenue_2015
+          FROM Product
+          WHERE year = 2015) avg_2015
+    ON p.year = 2015
+    JOIN (SELECT AVG(revenue) as avg_revenue_2016
+          FROM Product
+          WHERE year = 2016) avg_2016
+    ON p.year = 2016
+    WHERE p.revenue > avg_2015.avg_revenue_2015
+      AND p.revenue < avg_2016.avg_revenue_2016;
+    \end{verbatim}
+    
+    \item Using Subquery:
+    \begin{verbatim}
+    SELECT DISTINCT name
+    FROM Product
+    WHERE revenue > (SELECT AVG(revenue)
+                     FROM Product
+                     WHERE year = 2015)
+      AND revenue < (SELECT AVG(revenue)
+                     FROM Product
+                     WHERE year = 2016);
+    \end{verbatim}
+\item Using FULL JOIN:
+    \begin{verbatim}
+    SELECT DISTINCT p.name
+    FROM Product p
+    FULL JOIN Purchase pu ON p.name = pu.product
+    WHERE pu.price > (SELECT AVG(pu1.price) FROM Purchase pu1 WHERE YEAR(pu1.date) = 2015)
+    AND pu.price < (SELECT AVG(pu2.price) FROM Purchase pu2 WHERE YEAR(pu2.date) = 2016);
+    \end{verbatim}
+    
+\end{enumerate}
+\end{proof}
+
+\end{document}
