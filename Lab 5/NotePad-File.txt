@@ -18,6 +18,11 @@ SELECT CustomerID , COUNT(OrderID) AS totalorders FROM Orders GROUP BY CustomerI
 ***
 
 
+Q5
+SELECT * FROM Orders GROUP BY CustomerID;
+***
+
+
 Q6
 SELECT E.EmployeeID,DATEADD(day, num.n, '1996-07-04') AS Date FROM Employees E CROSS JOIN (SELECT TOP 1000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n FROM sys.columns) AS num;
 ***
