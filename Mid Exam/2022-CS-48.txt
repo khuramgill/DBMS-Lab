@@ -1,0 +1,53 @@
+Q1
+Not Done
+***
+
+
+Q2
+SELECT CASE WHEN MONTH(ss.EnrolledOn) BETWEEN 9 AND 12 THEN 'Fall ' + CONVERT(VARCHAR(4), YEAR(ss.EnrolledOn)) WHEN MONTH(ss.EnrolledOn) BETWEEN 1 AND 5 THEN 'Spring ' + CONVERT(VARCHAR(4), YEAR(ss.EnrolledOn)) WHEN MONTH(ss.EnrolledOn) BETWEEN 6 AND 8 THEN 'Summer ' + CONVERT(VARCHAR(4), YEAR(ss.EnrolledOn)) END AS SemesterName FROM dbo.SpikoStudentSection ss
+***
+
+
+Q3
+SELECT DISTINCT c.CourseTitle AS CourseName FROM dbo.SpikoCourse c LEFT JOIN dbo.SpikoSection s ON c.CourseId = s.CourseId LEFT JOIN dbo.SpikoStudentSection ss ON s.Id = ss.SectionId WHERE ss.SectionId IS NULL 
+***
+
+
+Q4
+SELECT u.UserName AS StudentName, SUM(se.ObtainedMarks) AS TotalMarks FROM dbo.SpikoStudent s JOIN dbo.AspNetUsers u ON s.UserId = u.Id LEFT JOIN dbo.SpikoStudentEvaluation se ON s.StudentId = se.StudentId LEFT JOIN dbo.SpikoEvaluation e ON se.EvaluationId = e.Id WHERE e.CourseId = 1015 GROUP BY u.UserName, u.Email
+***
+
+
+Q5
+SELECT c.CourseTitle AS CourseName FROM dbo.SpikoCourse c JOIN dbo.SpikoAnnouncement a ON c.CourseId = a.CourseId GROUP BY c.CourseTitle HAVING COUNT(*) > 5
+***
+
+
+Q6
+SELECT u.UserName AS StudentName FROM dbo.SpikoStudent s JOIN dbo.AspNetUsers u ON s.UserId = u.Id JOIN dbo.SpikoAssignmentSubmission ass ON s.StudentId = ass.StudentId JOIN dbo.SpikoAssignment a ON ass.AssignmentId = a.Id WHERE a.DeadLine - ass.SubmittedOn <= '01:00:00' GROUP BY u.UserName, u.Email HAVING COUNT(DISTINCT ass.AssignmentId) > 2 
+***
+
+
+Q7
+SELECT c.CourseTitle AS CourseName FROM dbo.SpikoCourse c JOIN dbo.SpikoSection s ON c.CourseId = s.CourseId JOIN dbo.SpikoStudentSection ss ON s.Id = ss.SectionId GROUP BY c.CourseTitle HAVING COUNT(DISTINCT ss.StudentId) > 50 
+***
+
+
+Q8
+SELECT a.Id AS AssignmentId FROM dbo.SpikoAssignment a LEFT JOIN dbo.SpikoAssignmentSubmission ass ON a.Id = ass.AssignmentId GROUP BY a.Id HAVING COUNT(ass.AssignmentId) <= 2
+***
+
+
+Q9
+SELECT DISTINCT c.CourseTitle AS CourseName FROM dbo.SpikoCourse c JOIN dbo.SpikoSection s ON c.CourseId = s.CourseId JOIN dbo.SpikoAssignment a ON s.Id = a.SectionId WHERE a.DeadLine > GETDATE()
+***
+
+
+Q10
+not done
+***
+
+
+Q11
+Not done
+***
