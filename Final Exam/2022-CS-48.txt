@@ -1,0 +1,17 @@
+Q1
+select max(UnitPrice) as UnitPrice from Products where  UnitPrice < (select max(UnitPrice) as UnitPrice1 from Products)
+***
+
+
+Q2
+SELECT p.ProductID, p.SupplierID FROM Products p JOIN (SELECT SupplierID, COUNT(ProductID) AS ProductCount FROM Products GROUP BY SupplierID HAVING COUNT(ProductID) = (SELECT MAX(ProductCount) FROM (SELECT COUNT(ProductID) AS ProductCount FROM Products GROUP BY SupplierID) AS Counts)) AS MaxSuppliers ON p.SupplierID = MaxSuppliers.SupplierID
+***
+
+
+Q3
+
+***
+
+
+
+
